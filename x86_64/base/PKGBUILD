@@ -1,0 +1,16 @@
+pkgname=joshuaxw-base
+pkgver=0.0.1
+pkgrel=1
+pkgdesc="Base system packages for joshuaxw"
+arch=('any')
+# url=
+license=('MIT')
+
+depends=(
+    # Base packages
+    base linux linux-firmware man-db man-pages texinfo nano
+
+    # Extra general packages
+#    sudo ripgrep exa fd wget fzf unzip zip dialog pacman-contrib bat ncdu
+#    keybase efibootmgr pv
+)
