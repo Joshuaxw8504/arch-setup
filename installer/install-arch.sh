@@ -27,13 +27,13 @@ echo -n "Size of boot partition (in MiB): "
 read boot_size
 echo -n "Size of swap partition (in MiB): "
 read swap_size
-boot_end=$(1 + $boot_size + 1)MiB
-swap_end=$($boot_end + $swap_size + 1)MiB
+boot_end=$(1 + $boot_size + 1)
+swap_end=$($boot_end + $swap_size + 1)
 
 # Partition disk
 parted --script "${disk}" -- mklabel gpt \
-       mkpart ESP fat32 1Mib ${boot_end} \
+       mkpart ESP fat32 1Mib ${boot_end}MiB \
        set 1 boot on \
-       mkpart primary linux-swap ${boot_end} ${swap_end} \
-       mkpart primary ext4 ${swap_end} 100%
+       mkpart primary linux-swap ${boot_end}MiB ${swap_end}MiB \
+       mkpart primary ext4 ${swap_end}MiB 100%
 
