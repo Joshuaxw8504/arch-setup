@@ -49,6 +49,8 @@ part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
 part_swap="$(ls ${disk}* | grep -E "^${swap}p?2$")"
 part_root="$(ls ${disk}* | grep -E "^${root}p?3$")"
 
+echo "$part_boot" "$part_swap" "$part_root"
+
 sleep 30
 
 mkfs.vfat -F32 "${part_boot}"
