@@ -28,8 +28,8 @@ read boot_size
 echo -n "Size of swap partition (in MiB): "
 read swap_size
 
-boot_end=$(1 + $boot_size + 1)
-swap_end=$( $boot_end + $swap_size + 1)
+boot_end=$((1 + $boot_size + 1))
+swap_end=$(($boot_end + $swap_size + 1))
 
 # Partition disk
 parted --script "${disk}" -- mklabel gpt \
