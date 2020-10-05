@@ -44,7 +44,7 @@ parted --script "${disk}" -- mklabel gpt \
        set 1 boot on \
        mkpart primary linux-swap ${boot_end}MiB ${swap_end}MiB \
        mkpart primary ext4 ${swap_end}MiB 100%
-
+echo test
 part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
 part_swap="$(ls ${disk}* | grep -E "^${disk}p?2$")"
 part_root="$(ls ${disk}* | grep -E "^${disk}p?3$")"
