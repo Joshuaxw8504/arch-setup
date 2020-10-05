@@ -25,8 +25,6 @@ echo
 echo -e "\nDisks:"
 lsblk
 
-echo ${hostname} ${password}
-
 echo -e "\nChoose a disk from the above:"
 read disk
 : "${disk:?"Missing disk"}"
@@ -42,7 +40,7 @@ swap_end=$(($boot_end + $swap_size + 1))
 
 # Partition disk
 parted --script "${disk}" -- mklabel gpt \
-       mkpart ESP fat32 1Mib ${boot_end}MiB \
+       mkpart ESP fat32 1MiB ${boot_end}MiB \
        set 1 boot on \
        mkpart primary linux-swap ${boot_end}MiB ${swap_end}MiB \
        mkpart primary ext4 ${swap_end}MiB 100%
@@ -51,15 +49,11 @@ part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
 part_swap="$(ls ${disk}* | grep -E "^${swap}p?2$")"
 part_root="$(ls ${disk}* | grep -E "^${root}p?3$")"
 
-wipefs "${part_boot}"
-wipefs "${part_swap}"
-wipefs "${part_root}"
-
 sleep 30
 
 mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
-mkfs.f2fs -f "${part_root}"
+mkfs.ext4 "${part_root}"
 
 swapon "${part_swap}"
 mount "${part_root}" /mnt
