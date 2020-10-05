@@ -23,10 +23,13 @@ lsblk
 
 echo -e "\nChoose a disk from the above:"
 read disk
+: "${disk:?"Missing disk"}"
 echo -n "Size of boot partition (in MiB): "
 read boot_size
+: "${boot_size:?"Missing boot size"}"
 echo -n "Size of swap partition (in MiB): "
 read swap_size
+: "${swap_size:?"Missing swap size"}"
 
 boot_end=$((1 + $boot_size + 1))
 swap_end=$(($boot_end + $swap_size + 1))
