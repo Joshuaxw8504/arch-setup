@@ -51,6 +51,10 @@ part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
 part_swap="$(ls ${disk}* | grep -E "^${swap}p?1$")"
 part_root="$(ls ${disk}* | grep -E "^${root}p?1$")"
 
+wipefs "${part_boot}"
+wipefs "${part_swap}"
+wipefs "${part_root}"
+
 mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
 mkfs.f2fs -f "${part_root}"
