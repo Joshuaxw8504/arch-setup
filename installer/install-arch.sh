@@ -21,6 +21,9 @@ echo
 echo -e "\nDisks:"
 lsblk
 
+echo hostname password
+exit 1
+
 echo -e "\nChoose a disk from the above:"
 read disk
 : "${disk:?"Missing disk"}"
