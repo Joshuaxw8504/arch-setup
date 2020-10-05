@@ -48,8 +48,8 @@ parted --script "${disk}" -- mklabel gpt \
        mkpart primary ext4 ${swap_end}MiB 100%
 
 part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
-part_swap="$(ls ${disk}* | grep -E "^${swap}p?1$")"
-part_root="$(ls ${disk}* | grep -E "^${root}p?1$")"
+part_swap="$(ls ${disk}* | grep -E "^${swap}p?2$")"
+part_root="$(ls ${disk}* | grep -E "^${root}p?3$")"
 
 wipefs "${part_boot}"
 wipefs "${part_swap}"
