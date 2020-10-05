@@ -14,6 +14,10 @@ echo -n "Hostname: "
 read hostname
 : "${hostname:?"Missing hostname"}"
 
+echo -n "Username: "
+read user
+: "${user:?"Missing username"}"
+
 echo -n "Password: "
 read -s password
 echo
@@ -44,7 +48,7 @@ parted --script "${disk}" -- mklabel gpt \
        set 1 boot on \
        mkpart primary linux-swap ${boot_end}MiB ${swap_end}MiB \
        mkpart primary ext4 ${swap_end}MiB 100%
-echo test
+
 part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
 part_swap="$(ls ${disk}* | grep -E "^${disk}p?2$")"
 part_root="$(ls ${disk}* | grep -E "^${disk}p?3$")"
@@ -66,10 +70,21 @@ mount "${part_boot}" /mnt/boot/efi
 # Install base system
 pacstrap /mnt base linux linux-firmware
 
+exit 1
+
 # Configure the system
 genfstab -U /mnt >> /mnt/etc/fstab
 
 arch-chroot /mnt ln-sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 arch-chroot /mnt hwclock --systohc
 
-echo "LANG=en_GB.UTF-8" > /mnt/etc/locale.conf
+locale-gen
+echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+
+echo "${hostname}" > /mnt/etc/hostname
+
+arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
+
+echo "$user:$password" | chpasswd --root /mnt
+echo "root:$password" | chpasswd --root /mnt
+
