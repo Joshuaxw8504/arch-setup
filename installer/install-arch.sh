@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Can be accessed from https://tinyurl.com/zqxjvkb-install-arch
+# Can be run with the command: $ source <(curl -sL https://tinyurl.com/zqxjvkb-install-arch)
 
 set -uo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
@@ -22,7 +23,7 @@ echo -e "\nDisks:"
 lsblk
 
 echo ${hostname} ${password}
-exit 1
+sleep 60
 
 echo -e "\nChoose a disk from the above:"
 read disk
