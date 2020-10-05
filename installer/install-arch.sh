@@ -55,6 +55,8 @@ wipefs "${part_boot}"
 wipefs "${part_swap}"
 wipefs "${part_root}"
 
+sleep 30
+
 mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
 mkfs.f2fs -f "${part_root}"
