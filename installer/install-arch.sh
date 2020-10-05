@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Can be accessed from https://tinyurl.com/zqxjvkb-install-arch
 
