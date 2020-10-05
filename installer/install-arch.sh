@@ -6,6 +6,9 @@
 set -uo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 
+# Update the system clock
+timedatectl set-ntp true
+
 # Set preliminary variables
 echo -n "Hostname: "
 read hostname
@@ -23,7 +26,6 @@ echo -e "\nDisks:"
 lsblk
 
 echo ${hostname} ${password}
-sleep 60
 
 echo -e "\nChoose a disk from the above:"
 read disk
@@ -45,3 +47,27 @@ parted --script "${disk}" -- mklabel gpt \
        mkpart primary linux-swap ${boot_end}MiB ${swap_end}MiB \
        mkpart primary ext4 ${swap_end}MiB 100%
 
+part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
+part_swap="$(ls ${disk}* | grep -E "^${swap}p?1$")"
+part_root="$(ls ${disk}* | grep -E "^${root}p?1$")"
+
+mkfs.vfat -F32 "${part_boot}"
+mkswap "${part_swap}"
+mkfs.f2fs -f "${part_root}"
+
+swapon "${part_swap}"
+mount "${part_root}" /mnt
+mkdir /mnt/boot
+mkdir /mnt/boot/efi
+mount "${part_boot}" /mnt/boot/efi
+
+# Install base system
+pacstrap /mnt base linux linux-firmware
+
+# Configure the system
+genfstab -U /mnt >> /mnt/etc/fstab
+
+arch-chroot /mnt ln-sf /usr/share/zoneinfo/America/Chicago /etc/localtime
+arch-chroot /mnt hwclock --systohc
+
+echo "LANG=en_GB.UTF-8" > /mnt/etc/locale.conf
