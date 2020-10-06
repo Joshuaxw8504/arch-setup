@@ -9,6 +9,16 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 exec 1> >(tee "stdout.log")
 exec 2> >(tee "stderr.log")
 
+# Default values for variables
+: 'hostname=arch
+username=jw
+disk=/dev/sda
+boot_size=550
+swap_size=4096
+'
+# Ask user if they want to change any of the default variables
+
+
 # Update the system clock
 timedatectl set-ntp true
 
