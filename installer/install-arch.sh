@@ -91,5 +91,5 @@ arch-chroot /mnt pacman -S grub efibootmgr dosfstools os-prober mtools
 arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
-arch-chroot /mnt networkmanager vim base-devel
+arch-chroot /mnt pacman -S networkmanager vim base-devel
 arch-chroot /mnt systemctl enable NetworkManager
