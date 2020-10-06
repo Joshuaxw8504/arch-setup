@@ -87,10 +87,14 @@ genfstab -U /mnt >> /mnt/etc/fstab
 arch-chroot /mnt ln-sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 arch-chroot /mnt hwclock --systohc
 
-locale-gen
 echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+locale-gen
 
 echo "${hostname}" > /mnt/etc/hostname
+
+echo "127.0.0.1	localhost" > /mnt/etc/hosts
+echo "::1	localhost" > /mnt/etc/hosts
+echo "127.0.1.1	${hostname}.localdomain	${hostname}"
 
 arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
 
