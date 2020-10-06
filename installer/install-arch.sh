@@ -55,8 +55,6 @@ part_root="$(ls ${disk}* | grep -E "^${disk}p?3$")"
 
 echo "$part_boot" "$part_swap" "$part_root"
 
-sleep 30
-
 mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
 mkfs.ext4 "${part_root}"
@@ -69,8 +67,6 @@ mount "${part_boot}" /mnt/boot/efi
 
 # Install base system
 pacstrap /mnt base linux linux-firmware
-
-exit 1
 
 # Configure the system
 genfstab -U /mnt >> /mnt/etc/fstab
