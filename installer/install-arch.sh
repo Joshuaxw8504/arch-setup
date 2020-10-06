@@ -9,28 +9,34 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 #exec 1> >(tee "stdout.log")
 #exec 2> >(tee "stderr.log")
 
-# Default values for variables
-: 'hostname=arch
+# Default values for variables (CHANGE THESE IF NEEDED)
+hostname=arch
 username=jw
 disk=/dev/sda
 boot_size=550
 swap_size=4096
-'
-# Ask user if they want to change any of the default variables
 
+# Ask user if they want to change any of the default variables
+echo "Here are all the disks that are available (output of lsblk):"
+lsblk
+echo "--------------------------------------------------------------------------------"
+echo "Here is the amount of free RAM in the system (output of free --mebi):"
+free --mebi
+echo "--------------------------------------------------------------------------------"
+echo "Here are all the currently set values:"
+echo "hostname=$hostname"
+echo "username=$username"
+echo "disk=$disk"
+echo "boot_size=$boot_size"
+echo "swap_size=$swap_size"
+echo -n "Would you like to change any of these values? (y/N): "
+read user_ans
+[[ "$user_ans" == "y" ]] && ( echo "Download this script using \"curl -sL https://tinyurl.com/zqxjvkb-install-arch > install.sh\" and change the variables to your liking, then run the script with \"sh install.sh\" when you are satisfied."; exit 1; )
 
 # Update the system clock
 timedatectl set-ntp true
 
-# Set preliminary variables
-echo -n "Hostname: "
-read hostname
-: "${hostname:?"Missing hostname"}"
-
-echo -n "Username: "
-read user
-: "${user:?"Missing username"}"
-
+# Ask user for password
 echo -n "Password: "
 read -s password
 echo
@@ -39,23 +45,11 @@ read -s password2
 echo
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
 
-echo -e "\nDisks:"
-lsblk
-
-echo -en "\nChoose a disk from the above:"
-read disk
-: "${disk:?"Missing disk"}"
-echo -n "Size of boot partition (in MiB): "
-read boot_size
-: "${boot_size:?"Missing boot size"}"
-echo -n "Size of swap partition (in MiB): "
-read swap_size
-: "${swap_size:?"Missing swap size"}"
-
+# Calculate partition endpoints
 boot_end=$((1 + $boot_size + 1))
 swap_end=$(($boot_end + $swap_size + 1))
 
-# Partition disk
+# Partition, format, and setup the disk
 parted --script "${disk}" -- mklabel gpt \
        mkpart ESP fat32 1MiB ${boot_end}MiB \
        set 1 boot on \
@@ -65,8 +59,6 @@ parted --script "${disk}" -- mklabel gpt \
 part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
 part_swap="$(ls ${disk}* | grep -E "^${disk}p?2$")"
 part_root="$(ls ${disk}* | grep -E "^${disk}p?3$")"
-
-echo "$part_boot" "$part_swap" "$part_root"
 
 mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
@@ -79,31 +71,38 @@ mkdir /mnt/boot/efi
 mount "${part_boot}" /mnt/boot/efi
 
 # Install base system
-pacstrap /mnt base linux linux-firmware
+ppacstrap /mnt base linux linux-firmware
 
-# Configure the system
+# Generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
 
+# Set timezone
 arch-chroot /mnt ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 arch-chroot /mnt hwclock --systohc
 
-echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+# Generate locales
+echo "LANG=en_US.UTF-8" >> /mnt/etc/locale.conf
 locale-gen
 
+# Set hostname and /etc/hosts file
 echo "${hostname}" > /mnt/etc/hostname
 
 echo "127.0.0.1	localhost" > /mnt/etc/hosts
-echo "::1	localhost" > /mnt/etc/hosts
-echo "127.0.1.1	${hostname}.localdomain	${hostname}" > /mnt/etc/hosts
+echo "::1	localhost" >> /mnt/etc/hosts
+echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 
-arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
+# Add a new user
+arch-chroot /mnt useradd -mU -G wheel,uucp,video,audio,storage,games,input "$user"
 
+# Set passwords
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
-arch-chroot /mnt pacman -S grub efibootmgr dosfstools os-prober mtools
+# Set up bootloader (grub)
+arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
 arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
-arch-chroot /mnt pacman -S networkmanager vim base-devel
+# Add additional packages
+arch-chroot /mnt pacman -S --noconfirm networkmanager vim base-devel
 arch-chroot /mnt systemctl enable NetworkManager
