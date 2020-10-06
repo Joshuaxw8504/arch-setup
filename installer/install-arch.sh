@@ -84,7 +84,7 @@ pacstrap /mnt base linux linux-firmware
 # Configure the system
 genfstab -U /mnt >> /mnt/etc/fstab
 
-arch-chroot /mnt ln-sf /usr/share/zoneinfo/America/Chicago /etc/localtime
+arch-chroot /mnt ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 arch-chroot /mnt hwclock --systohc
 
 echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
