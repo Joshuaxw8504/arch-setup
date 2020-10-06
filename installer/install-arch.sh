@@ -6,6 +6,9 @@
 set -uo pipefail
 trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 
+exec 1> >(tee "stdout.log")
+exec 2> >(tee "stderr.log")
+
 # Update the system clock
 timedatectl set-ntp true
 
@@ -84,3 +87,9 @@ arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,g
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
+arch-chroot /mnt pacman -S grub efibootmgr dosfstools os-prober mtools
+arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+
+arch-chroot /mnt networkmanager vim base-devel
+arch-chroot /mnt systemctl enable NetworkManager
