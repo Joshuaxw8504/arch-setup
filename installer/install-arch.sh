@@ -42,7 +42,7 @@ echo
 echo -e "\nDisks:"
 lsblk
 
-echo -e "\nChoose a disk from the above:"
+echo -en "\nChoose a disk from the above:"
 read disk
 : "${disk:?"Missing disk"}"
 echo -n "Size of boot partition (in MiB): "
@@ -94,7 +94,7 @@ echo "${hostname}" > /mnt/etc/hostname
 
 echo "127.0.0.1	localhost" > /mnt/etc/hosts
 echo "::1	localhost" > /mnt/etc/hosts
-echo "127.0.1.1	${hostname}.localdomain	${hostname}"
+echo "127.0.1.1	${hostname}.localdomain	${hostname}" > /mnt/etc/hosts
 
 arch-chroot /mnt useradd -mU -s /usr/bin/zsh -G wheel,uucp,video,audio,storage,games,input "$user"
 
