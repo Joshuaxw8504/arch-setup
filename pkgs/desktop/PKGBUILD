@@ -27,6 +27,7 @@ depends=(
 )
 
 source=('emacs.desktop')
+md5sums=('SKIP')
 package() {
     install -Dm 0644 emacs.desktop "$pkgdir/usr/share/xsessions/emacs.desktop"
 }
