@@ -25,3 +25,9 @@ depends=(
     # Other applications
     # discord-canary
 )
+
+source=('emacs.desktop')
+package() {
+    install -Dm 0644 emacs.desktop "$pkgdir/usr/share/xsessions/emacs.desktop"
+}
+

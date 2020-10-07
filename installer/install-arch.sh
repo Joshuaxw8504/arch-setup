@@ -71,7 +71,7 @@ mkdir /mnt/boot/efi
 mount "${part_boot}" /mnt/boot/efi
 
 # Install base system
-ppacstrap /mnt base linux linux-firmware
+pacstrap /mnt base linux linux-firmware
 
 # Generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -93,6 +93,9 @@ echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 
 # Add a new user
 arch-chroot /mnt useradd -mU -G wheel,uucp,video,audio,storage,games,input "$user"
+
+# Add new user to /etc/sudoers
+echo "%wheel ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo
 
 # Set passwords
 echo "$user:$password" | chpasswd --root /mnt
