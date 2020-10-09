@@ -16,11 +16,11 @@ check_optdepends() {
 	fi
 }
 
-fallback_view() {
-	printf "\nIncorrect USER_INTERFACE setting -- falling back to default\n" 1>&2
-	read
-	source $(pkg_path)/view/dialog.sh
-}
+#fallback_view() {
+#	printf "\nIncorrect USER_INTERFACE setting -- falling back to default\n" 1>&2
+#	read
+#	source $(pkg_path)/view/dialog.sh
+#}
 
 repair_settings() {
 	read -r -p "Would you like to repair settings? [y/N]"
@@ -61,14 +61,15 @@ if [[ "$EUID" -eq 0 ]]; then
 	source_service
 	source_controller
 
-	case "$USER_INTERFACE" in
-		'cli')
-			source $(pkg_path)/view/cli.sh;;
-		'dialog')
-			source $(pkg_path)/view/dialog.sh;;
-		*)
-			fallback_view;;	
-	esac
+#	case "$USER_INTERFACE" in
+#		'cli')
+#			source $(pkg_path)/view/cli.sh;;
+#		'dialog')
+#			source $(pkg_path)/view/dialog.sh;;
+#		*)
+#			fallback_view;;	
+#	esac
 
+        source $(pkg_path)/view/cli.sh
 	execute_main
 fi
