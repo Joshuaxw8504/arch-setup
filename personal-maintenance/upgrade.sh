@@ -81,6 +81,7 @@ upgrade_manual() {
 		;;
 	    "Reboot")
 		reboot
+		;;
 	    "Quit")
 		exit
 		;;

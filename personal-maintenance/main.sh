@@ -37,19 +37,20 @@ manual() {
     select option in "${options[@]}"; do
 	case $option in
 	    "Errors")
-		errors_menu
+		errors_manual
 		;;
 	    "Backup")
-		backup_menu
+		backup_manual
 		;;
 	    "Upgrade")
-		upgrade_menu
+		upgrade_manual
 		;;
 	    "Clean")
-		clean_menu
+		clean_manual
 		;;
 	    "Change settings")
 		vim "$pkg_dir/settings.sh"
+		;;
 	    "Quit")
 		exit
 		;;
