@@ -8,13 +8,16 @@ license=('MIT')
 
 depends=(
     # Base packages
-    base linux linux-firmware man-db man-pages texinfo
+    base linux linux-firmware man-db man-pages texinfo pacman-contrib
 
     # Bootloader and related packages
     grub efibootmgr dosfstools os-prober mtools
 
     # Basic utilities
-    networkmanager vim emacs firefox git
+    networkmanager git cronie
+
+    # Higher-level utilities
+    vim emacs firefox mpv youtube-dl
 
     # base-devel group
     autoconf automake binutils bison fakeroot file findutils flex gawk gcc gettext grep groff gzip libtool m4 make pacman patch pkgconf sed sudo texinfo which

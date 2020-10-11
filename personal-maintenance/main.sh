@@ -7,24 +7,41 @@ red="\e[41m"
 heading_color=$red
 user_home="/home/jw"
 package_list_file="$user_home/backup/package_list.txt"
+declare -a git_repos=("arch-setup" "dotfiles" ".emacs.d")
+boot_time=$(date +%s -d 'tomorrow 7:00')
 
 # Check for errors
 failed_services() {
-	printf "\nFAILED SYSTEMD SERVICES:\n"
+	printf "FAILED SYSTEMD SERVICES:\n"
 	systemctl --failed
 }
 
 journal_errors() {
-	printf "\nHIGH PRIORITY SYSTEMD JOURNAL ERRORS:\n"
+	printf "HIGH PRIORITY SYSTEMD JOURNAL ERRORS:\n"
 	journalctl -p 3 -xb
 }
 
+check_errors() {
+    failed_services
+    journal_errors
+}
+
+
 # Backups
 # Config files (git)
+update_config_files() {
+    printf "Remember to update the following github repos, if needed:\n"
+    for repo in "$(git_repos[@])"
+    do
+	printf "$repo\n"
+    done
+}
+
 # List of installed packages (maybe look at metapackages too?)
 package_list() {
     pacman -Qe > "$package_list_file"
     # Consider automatically backing this up to git/metapackages?
+    printf "Done updating package list\n"
 }
 
 # System backup
@@ -44,8 +61,17 @@ restore_home_backup() {
 # Upgrading the system
 arch_news() {
     # Output list of packages that will be updated
-    printf "Ctrl-click on the following link to make sure there are no updates requiring manual intervention: \e]8;;https://www.archlinux.org/news\aArch news\e]8;;\a\n"
+    printf "Packages that will be updated:\n"
+    pacman -Qu
+    printf "Ctrl-click on the following link to make sure that none of the updates require manual intervention: \e]8;;https://www.archlinux.org/news\aArch news\e]8;;\a\n"
     # Wait for user to confirm that they read it
+    echo "Press any key to continue, after reading the arch news"
+    while [[ true ]] ; do
+	read -t 1 -n 1
+	if [[ $? = 0 ]] ; then
+	    exit ;
+	fi
+    done
 }
 
 update_mirrorlist() {
@@ -60,7 +86,7 @@ update_system() {
 
 update_aur() {
     yay -Syu
-    printf "Done updating aur packages"
+    printf "Done updating aur packages\n"
 }
 
 pacman_alerts() {
@@ -74,7 +100,7 @@ pacman_alerts() {
 
 handle_pacfiles() {
 	pacdiff
-	printf "...Done checking for pacfiles\n"
+	printf "Done checking for pacfiles\n"
 }
 
 reboot() {
@@ -87,7 +113,7 @@ reboot() {
 clean_package_cache() {
     # Leaves past three versions of installed packages but only one past version of uninstalled packages
     paccache -rk3 -ruk1
-    printf "Done cleaning the package cache"
+    printf "Done cleaning the package cache\n"
 }
 
 # Check for orphans/dropped packages
@@ -112,5 +138,27 @@ if [[ "$EUID" -ne 0 ]]; then
 	exit 1
 fi
 
-boot_time=$(date +%s -d 'tomorrow 7:00')
+# Backup things
+#config_backup?
+package_list
+home_backup
+
+# Shutdown and schedule startup time
 sudo rtcwake -l -m disk -t "$boot_time"
+
+# Upgrade system
+update_mirrorlist
+arch_news
+update_system
+update_aur
+pacman_alerts
+handle_pacfiles
+
+# Check for errors
+failed_services
+journal_errors
+
+# Clean filesystem
+clean_package_cache
+clean_broken_symlinks
+clean_old_config

@@ -92,7 +92,7 @@ echo "::1	localhost" >> /mnt/etc/hosts
 echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 
 # Add a new user
-arch-chroot /mnt useradd -mU -G wheel,uucp,video,audio,storage,games,input,realtime,libvirt "$user"
+arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input,realtime,libvirt "$user"
 
 # Add new user to /etc/sudoers
 echo "%wheel ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo
