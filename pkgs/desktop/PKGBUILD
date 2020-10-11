@@ -12,6 +12,15 @@ depends=(
 
     # Other applications
     # discord-canary
+
+    # Game development
+    jack2 qjackctl
+
+    # VMs
+    qemu libvirt virt-manager edk2ovmf
+
+    # Fun
+    xonotic
 )
 
 source=('emacs.desktop')
