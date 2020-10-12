@@ -57,38 +57,51 @@ reboot() {
 
 
 upgrade_manual() {
-    options=("Check arch news" "Update mirrorlist" "Upgrade system" "Upgrade aur packages" "See pacman alerts" "Handle pacfiles" "Reboot" "Quit")
-    PS3="Choose an option: "
-    select option in "${options[@]}"; do
-	case $option in
-	    "Check arch news")
-		arch_news
-		;;
-	    "Update mirrorlist")
-		update_mirrorlist
-		;;
-	    "Upgrade system")
-		upgrade_system
-		;;
-	    "Upgrade aur packages")
-		upgrade_aur
-		;;
-	    "See pacman alerts")
-		pacman_alerts
-		;;
-	    "Handle pacfiles")
-		handle_pacfiles
-		;;
-	    "Reboot")
-		reboot
-		;;
-	    "Quit")
-		exit
-		;;
-	    *)
-		printf "Please choose a valid option\n"
-		;;
-	esac
+    upgrade_quit=false
+    while [ $upgrade_quit != true ]; do
+	line
+	options=("Check arch news" "Update mirrorlist" "Upgrade system" "Upgrade aur packages" "See pacman alerts" "Handle pacfiles" "Reboot" "Quit")
+	PS3="Choose an option: "
+	select option in "${options[@]}"; do
+	    case $option in
+		"Check arch news")
+		    arch_news
+		    break
+		    ;;
+		"Update mirrorlist")
+		    update_mirrorlist
+		    break
+		    ;;
+		"Upgrade system")
+		    upgrade_system
+		    break
+		    ;;
+		"Upgrade aur packages")
+		    upgrade_aur
+		    break
+		    ;;
+		"See pacman alerts")
+		    pacman_alerts
+		    break
+		    ;;
+		"Handle pacfiles")
+		    handle_pacfiles
+		    break
+		    ;;
+		"Reboot")
+		    reboot
+		    break
+		    ;;
+		"Quit")
+		    upgrade_quit=true
+		    break
+		    ;;
+		*)
+		    printf "Please choose a valid option\n"
+		    break
+		    ;;
+	    esac
+	done
     done
 }
 

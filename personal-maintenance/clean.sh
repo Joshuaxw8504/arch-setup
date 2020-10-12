@@ -18,30 +18,47 @@ clean_old_config() {
 
 # Check for broken symlinks
 clean_broken_symlinks() {
-    printf "Placeholder, checking symlinks does not actually work yet"
+    printf "Broken symlinks:\n"
+    symlinks=$(find "${symlink_dirs[@]}" -xtype l -print)
+    printf '%s\n' "$symlinks"
+    read -p "Do you want to remove all the above symlinks? (y/N) "
+    if [[ $REPLY == 'y' ]]; then
+	rm $symlinks
+    fi
+    # insert code to ask user if they want to remove all broken symlinks
+    
 }
 
 clean_manual() {
-    options=("Clean package cache" "Clean broken symlinks" "Clean old config files" "Quit")
-    PS3="Choose an option: "
-    select option in "${options[@]}"; do
-	case $option in
-	    "Clean package cache")
-		clean_package_cache
-		;;
-	    "Clean broken symlinks")
-		clean_broken_symlinks
-		;;
-	    "Clean old config files")
-		clean_old_config
-		;;
-	    "Quit")
-		exit
-		;;
-	    *)
-		printf "Please choose a valid option\n"
-		;;
-	esac
+    clean_quit=false
+    while [ $clean_quit != true ]; do
+	line
+	options=("Clean package cache" "Clean broken symlinks" "Clean old config files" "Quit")
+	PS3="Choose an option: "
+	select option in "${options[@]}"; do
+	    case $option in
+		"Clean package cache")
+		    clean_package_cache
+		    break
+		    ;;
+		"Clean broken symlinks")
+		    clean_broken_symlinks
+		    break
+		    ;;
+		"Clean old config files")
+		    clean_old_config
+		    break
+		    ;;
+		"Quit")
+		    clean_quit=true
+		    break
+		    ;;
+		*)
+		    printf "Please choose a valid option\n"
+		    break
+		    ;;
+	    esac
+	done
     done
 }
 

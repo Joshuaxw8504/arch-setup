@@ -12,23 +12,31 @@ journal_errors() {
 }
 
 errors_manual() {
-    options=("Print failed systemd services" "Print high priority systemd journal errors" "Quit")
-    PS3="Choose an option: "
-    select option in "${options[@]}"; do
-	case $option in
-	    "Print failed systemd services")
-		failed_services
-		;;
-	    "Print high priority systemd journal errors")
-		journal_errors
-		;;
-	    "Quit")
-		exit
-		;;
-	    *)
-		printf "Please choose a valid option\n"
-		;;
-	esac
+    errors_quit=false
+    while [ $errors_quit != true ]; do
+	line
+	options=("Print failed systemd services" "Print high priority systemd journal errors" "Quit")
+	PS3="Choose an option: "
+	select option in "${options[@]}"; do
+	    case $option in
+		"Print failed systemd services")
+		    failed_services
+		    break
+		    ;;
+		"Print high priority systemd journal errors")
+		    journal_errors
+		    break
+		    ;;
+		"Quit")
+		    errors_quit=true
+		    break
+		    ;;
+		*)
+		    printf "Please choose a valid option\n"
+		    break
+		    ;;
+	    esac
+	done
     done
 }
 

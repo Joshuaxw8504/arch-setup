@@ -18,6 +18,7 @@ fi
 
 pkg_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 source "$pkg_dir/settings.sh"
+source "$pkg_dir/util.sh"
 source "$pkg_dir/errors.sh"
 source "$pkg_dir/backup.sh"
 source "$pkg_dir/upgrade.sh"
@@ -32,32 +33,37 @@ automatic() {
 }
 
 manual() {
-    options=("Errors" "Backup" "Upgrade" "Clean" "Change settings" "Quit")
-    PS3="Choose an option: "
-    select option in "${options[@]}"; do
-	case $option in
-	    "Errors")
-		errors_manual
-		;;
-	    "Backup")
-		backup_manual
-		;;
-	    "Upgrade")
-		upgrade_manual
-		;;
-	    "Clean")
-		clean_manual
-		;;
-	    "Change settings")
-		vim "$pkg_dir/settings.sh"
-		;;
-	    "Quit")
-		exit
-		;;
-	    *)
-		printf "Please choose a valid option\n"
-		;;
-	esac
+    quit=false
+    while [ $quit != true ]; do
+	line
+	options=("Errors" "Backup" "Upgrade" "Clean" "Change settings" "Quit")
+	PS3="Main menu - choose an option: "
+	select option in "${options[@]}"; do
+	    case $option in
+		"Errors")
+		    errors_manual
+		    break ;;
+		"Backup")
+		    backup_manual
+		    break ;;
+		"Upgrade")
+		    upgrade_manual
+		    break ;;
+		"Clean")
+		    clean_manual
+		    break ;;
+		"Change settings")
+		    vim "$pkg_dir/settings.sh"
+		    break ;;
+		"Quit")
+		    quit=true
+		    break ;;
+		*)
+		    printf "Please choose a valid option\n"
+		    break
+		    ;;
+	    esac
+	done
     done
 }
 
