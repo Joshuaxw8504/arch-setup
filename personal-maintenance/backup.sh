@@ -6,6 +6,7 @@ update_config_files() {
     do
 	printf "$repo\n"
     done
+    wait_for_keypress
 }
 
 # List of installed packages (maybe look at metapackages too?)
@@ -16,10 +17,14 @@ package_list() {
 	return
     fi
     
-#    printf "Do you want to backup your package list to $package_list_file?\n"
-    pacman -Qe > "$package_list_file"
+    read -p "Do you want to backup your package list to $package_list_file? (y/N) "
+    if [[ $REPLY == 'y' ]]; then
+	pacman -Qe > "$package_list_file"
+    fi
+    
     # Consider automatically backing this up to git/metapackages?
     printf "Done updating package list\n"
+    wait_for_keypress
 }
 
 # System backup
@@ -29,7 +34,9 @@ system_backup() { # Idea: don't do system backups at all, keep all important stu
 
 # Home backup
 home_backup() {
-    #Use borg
+    read -p "Do you want to backup the chosen directories to $backup_dir? (y/N) "
+    if [[ $REPLY != 'y' ]]; then return; fi
+    
     # Setting this, so the repo does not need to be given on the commandline:
     export BORG_REPO="$backup_dir"
 

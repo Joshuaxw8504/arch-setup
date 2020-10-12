@@ -5,6 +5,7 @@ clean_package_cache() {
     # Leaves past three versions of installed packages but only one past version of uninstalled packages
     paccache -rk3 -ruk1
     printf "Done cleaning the package cache\n"
+    wait_for_keypress
 }
 
 # Check for orphans/dropped packages
@@ -14,6 +15,7 @@ clean_old_config() {
     printf "$user_home/.config/\n"
     printf "$user_home/.cache/\n"
     printf "$user_home/.local/share/\n"
+    wait_for_keypress
 }
 
 # Check for broken symlinks
@@ -25,8 +27,7 @@ clean_broken_symlinks() {
     if [[ $REPLY == 'y' ]]; then
 	rm $symlinks
     fi
-    # insert code to ask user if they want to remove all broken symlinks
-    
+    wait_for_keypress
 }
 
 clean_manual() {

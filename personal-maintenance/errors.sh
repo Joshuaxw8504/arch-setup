@@ -1,14 +1,15 @@
 #!/bin/bash
 
 failed_services() {
-	printf "Failed systemd services:\n"
-	systemctl --failed
+    printf "Failed systemd services:\n"
+    systemctl --failed
+    wait_for_keypress
 }
 
 journal_errors() {
-    #TODO: let user press enter to continue, since the journal command autoamtically takes over the screen
-	printf "High priority systemd journal errors:\n"
-	journalctl -p 3 -xb
+    printf "High priority systemd journal errors:\n"
+    journalctl -p 3 -xb
+    wait_for_keypress
 }
 
 errors_manual() {

@@ -12,13 +12,7 @@ arch_news() {
     fi
 
     printf "\nCtrl-click on the following link to make sure that none of the updates require manual intervention: \e]8;;https://www.archlinux.org/news\aArch news\e]8;;\a\n"
-    echo "Press any key to continue, after reading the arch news"
-    while [[ true ]] ; do
-	read -t 1 -n 1
-	if [[ $? = 0 ]] ; then
-	    return
-	fi
-    done
+    wait_for_keypress
 }
 
 update_mirrorlist() {
@@ -27,27 +21,37 @@ update_mirrorlist() {
 }
 
 upgrade_system() {
-    pacman -Syu
-    printf "Done updating system\n"
+    read -p "Do you want to upgrade the system? (y/N) "
+    if [[ $REPLY == 'y' ]]; then
+	pacman -Syu
+	printf "Done updating system\n"
+    fi
+
 }
 
 upgrade_aur() {
-    yay -Syu
-    printf "Done updating aur packages\n"
+    read -p "Do you want to upgrade aur packages? (y/N) "
+    if [[ $REPLY == 'y' ]]; then
+	yay -Syu
+	printf "Done updating aur packages\n"
+    fi
 }
 
 pacman_alerts() {
-	last_upgrade="$(sed -n '/pacman -Syu/h; ${x;s/.\([0-9-]*\).*/\1/p;}' /var/log/pacman.log)"
-
-	if [[ -n "$last_upgrade" ]]; then
-		paclog --after="$last_upgrade" | paclog --warnings
-	fi
-	printf "Done checking for pacman log warnings\n"
+    last_upgrade="$(sed -n '/pacman -Syu/h; ${x;s/.\([0-9-]*\).*/\1/p;}' /var/log/pacman.log)"
+    printf "Pacman log warnings:\n"
+    if [[ -n "$last_upgrade" ]]; then
+	paclog --after="$last_upgrade" | paclog --warnings
+    fi
+    printf "Done checking for pacman log warnings\n"
+    wait_for_keypress
 }
 
 handle_pacfiles() {
-	pacdiff
-	printf "Done checking for pacfiles\n"
+    printf "Handling pacfiles:\n"
+    pacdiff
+    printf "Done checking for pacfiles\n"
+    wait_for_keypress
 }
 
 reboot() {
