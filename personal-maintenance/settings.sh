@@ -9,4 +9,4 @@ package_list_file="$user_home/backup/package_list.txt"
 git_repos=("arch-setup" "dotfiles" ".emacs.d")
 backup_dir="$user_home/backup/borg"
 symlink_dirs=("/etc" "/home" "/opt" "/srv" "/usr")
-boot_time=$(date +%s -d 'tomorrow 7:00')
+boot_time=$(date +%s -d 'today 22:06')

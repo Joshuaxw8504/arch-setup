@@ -14,6 +14,7 @@ package_list() {
     if [[ ! -f "$package_list_file" ]]
     then
 	printf "The package list file that was specified ($package_list_file) does not exist. Please create it and try again.\n"
+	wait_for_keypress
 	return
     fi
     

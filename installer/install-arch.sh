@@ -9,41 +9,29 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 #exec 1> >(tee "stdout.log")
 #exec 2> >(tee "stderr.log")
 
-# Default values for variables (CHANGE THESE IF NEEDED)
-hostname=arch
-username=jw
-disk=/dev/sda
-boot_size=550
-swap_size=4096
-
-# Ask user if they want to change any of the default variables
-echo "Here are all the disks that are available (output of lsblk):"
-lsblk
-echo "--------------------------------------------------------------------------------"
-echo "Here is the amount of free RAM in the system (output of free --mebi):"
-free --mebi
-echo "--------------------------------------------------------------------------------"
-echo "Here are all the currently set values:"
-echo "hostname=$hostname"
-echo "username=$username"
-echo "disk=$disk"
-echo "boot_size=$boot_size"
-echo "swap_size=$swap_size"
-echo -n "Would you like to change any of these values? (y/N): "
-read user_ans
-[[ "$user_ans" == "y" ]] && ( echo "Download this script using \"curl -sL https://tinyurl.com/zqxjvkb-install-arch > install.sh\" and change the variables to your liking, then run the script with \"sh install.sh\" when you are satisfied."; exit 1; )
-
 # Update the system clock
 timedatectl set-ntp true
 
-# Ask user for password
-echo -n "Password: "
-read -s password
-echo
-echo -n "Repeat Password: "
-read -s password2
-echo
+# Get user input
+read -p "Enter hostname: " hostname
+
+read -p "Enter name of first user: " username
+
+read -ps "Enter password (this will become both the root password and user password): " password
+read -ps "Confirm password: " password2
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
+
+echo "Available disks on the system (output of lsblk):"
+lsblk
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+read -p "Enter the disk that you would like to install on (THIS WILL WIPE ALL DATA ON THE DISK): " disk
+
+read -p "Enter the size of your boot partition (in MiB): " boot_size
+
+echo "Amount of free RAM in the system (output of free --mebi):"
+free --mebi
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+read -p "Enter the amount of swap space that you want (in MiB): " swap_size
 
 # Calculate partition endpoints
 boot_end=$((1 + $boot_size + 1))
@@ -71,7 +59,11 @@ mkdir /mnt/boot/efi
 mount "${part_boot}" /mnt/boot/efi
 
 # Install base system
-pacstrap /mnt base linux linux-firmware
+pacman -Sy git
+git clone https://github.com/zqxjvkb/arch-setup
+cd arch-setup/pkgs/base
+makepkg -s
+pacstrap /mnt joshuaxw-base
 
 # Generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -94,7 +86,7 @@ echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 # Add a new user
 arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input,realtime,libvirt "$user"
 
-# Add new user to /etc/sudoers
+# Add wheel users to /etc/sudoers
 echo "%wheel ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo
 
 # Set passwords
