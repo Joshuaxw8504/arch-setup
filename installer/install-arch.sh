@@ -17,8 +17,8 @@ read -p "Enter hostname: " hostname
 
 read -p "Enter name of first user: " username
 
-read -ps "Enter password (this will become both the root password and user password): " password
-read -ps "Confirm password: " password2
+read -sp "Enter password (this will become both the root password and user password): " password
+read -sp "Confirm password: " password2
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
 
 echo "Available disks on the system (output of lsblk):"
@@ -59,10 +59,13 @@ mkdir /mnt/boot/efi
 mount "${part_boot}" /mnt/boot/efi
 
 # Install base system
+useradd temp-user
 pacman -Sy git
 git clone https://github.com/zqxjvkb/arch-setup
-cd arch-setup/pkgs/base
-makepkg -s
+cd /arch-setup/pkgs/base
+chmod a+w /arch-setup/pkgs/base
+pacman -S binutils make gcc pkg-config fakeroot
+su temp-user -c makepkg -s
 pacstrap /mnt joshuaxw-base
 
 # Generate fstab file
