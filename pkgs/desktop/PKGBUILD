@@ -17,7 +17,7 @@ depends=(
     jack2 qjackctl
 
     # VMs
-    qemu libvirt virt-manager edk2ovmf
+    qemu libvirt virt-manager edk2-ovmf
 
     # Fun
     xonotic

@@ -59,14 +59,7 @@ mkdir /mnt/boot/efi
 mount "${part_boot}" /mnt/boot/efi
 
 # Install base system
-useradd temp-user
-pacman -Sy git
-git clone https://github.com/zqxjvkb/arch-setup
-cd /arch-setup/pkgs/base
-chmod a+w /arch-setup/pkgs/base
-pacman -S binutils make gcc pkg-config fakeroot
-su temp-user -c makepkg -s
-pacstrap /mnt joshuaxw-base
+pacstrap /mnt base linux linux-firmware git base-devel
 
 # Generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -77,7 +70,7 @@ arch-chroot /mnt hwclock --systohc
 
 # Generate locales
 echo "LANG=en_US.UTF-8" >> /mnt/etc/locale.conf
-locale-gen
+arch-chroot /mnt locale-gen
 
 # Set hostname and /etc/hosts file
 echo "${hostname}" > /mnt/etc/hostname
@@ -90,17 +83,24 @@ echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input,realtime,libvirt "$user"
 
 # Add wheel users to /etc/sudoers
-echo "%wheel ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo
+arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo
 
 # Set passwords
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
+# install meta-packages
+arch-chroot /mnt git clone https://github.com/zqxjvkb/arch-setup
+arch-chroot /mnt cd ~/arch-setup/pkgs/base
+arch-chroot /mnt makepkg -si
+arch-chroot /mnt cd ~/arch-setup/pkgs/desktop
+arch-chroot /mnt makepkg -si
+
 # Set up bootloader (grub)
-arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
+# arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
 arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 # Add additional packages
-arch-chroot /mnt pacman -S --noconfirm networkmanager vim base-devel
+# arch-chroot /mnt pacman -S --noconfirm networkmanager vim base-devel
 arch-chroot /mnt systemctl enable NetworkManager
