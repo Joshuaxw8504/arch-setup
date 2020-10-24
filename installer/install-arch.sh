@@ -18,7 +18,9 @@ read -p "Enter hostname: " hostname
 read -p "Enter name of first user: " user
 
 read -sp "Enter password (this will become both the root password and user password): " password
+echo
 read -sp "Confirm password: " password2
+echo
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match"; exit 1; )
 
 echo "Available disks on the system (output of lsblk):"
@@ -80,7 +82,7 @@ echo "::1	localhost" >> /mnt/etc/hosts
 echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 
 # Add a new user
-arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input,realtime,libvirt "$user"
+arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input "$user"
 # TODO: add realtime and libvirt groups to metapackages
 # Add wheel users to /etc/sudoers
 arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo
