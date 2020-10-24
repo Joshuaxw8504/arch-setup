@@ -15,7 +15,7 @@ timedatectl set-ntp true
 # Get user input
 read -p "Enter hostname: " hostname
 
-read -p "Enter name of first user: " username
+read -p "Enter name of first user: " user
 
 read -sp "Enter password (this will become both the root password and user password): " password
 read -sp "Confirm password: " password2
@@ -81,7 +81,7 @@ echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 
 # Add a new user
 arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input,realtime,libvirt "$user"
-
+# TODO: add realtime and libvirt groups to metapackages
 # Add wheel users to /etc/sudoers
 arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | sudo EDITOR='tee -a' visudo
 
@@ -90,11 +90,9 @@ echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # install meta-packages
-arch-chroot /mnt git clone https://github.com/zqxjvkb/arch-setup
-arch-chroot /mnt cd ~/arch-setup/pkgs/base
-arch-chroot /mnt makepkg -si
-arch-chroot /mnt cd ~/arch-setup/pkgs/desktop
-arch-chroot /mnt makepkg -si
+arch-chroot "/mnt/home/$user" git clone https://github.com/zqxjvkb/arch-setup
+arch-chroot "/mnt/home/$user/arch-setup/pkgs/base" "su -l $user -c 'makepkg -s'"
+arch-chroot "/mnt/home/$user/arch-setup/pkgs/desktop" "su -l $user -c 'makepkg -s'"
 
 # Set up bootloader (grub)
 # arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
