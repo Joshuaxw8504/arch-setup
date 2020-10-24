@@ -92,9 +92,11 @@ echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # install meta-packages
-arch-chroot "/mnt/home/$user" git clone https://github.com/zqxjvkb/arch-setup
-arch-chroot "/mnt/home/$user/arch-setup/pkgs/base" "su -l $user -c 'makepkg -s'"
-arch-chroot "/mnt/home/$user/arch-setup/pkgs/desktop" "su -l $user -c 'makepkg -s'"
+arch-chroot /mnt /bin/bash <<EOF
+"cd /home/$user" git clone https://github.com/zqxjvkb/arch-setup
+"cd /home/$user/arch-setup/pkgs/base" "su -l $user -c 'makepkg -s'"
+"cd /home/$user/arch-setup/pkgs/desktop" "su -l $user -c 'makepkg -s'"
+EOF
 
 # Set up bootloader (grub)
 # arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
