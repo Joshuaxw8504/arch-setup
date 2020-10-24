@@ -94,7 +94,7 @@ echo "root:$password" | chpasswd --root /mnt
 # install meta-packages
 arch-chroot /mnt /bin/bash <<EOF
 cd /home/$user
-git clone https://github.com/zqxjvkb/arch-setup
+su -l $user -c "git clone https://github.com/zqxjvkb/arch-setup"
 cd /home/$user/arch-setup/pkgs/base
 su -l $user -c "makepkg -s"
 cd /home/$user/arch-setup/pkgs/desktop
