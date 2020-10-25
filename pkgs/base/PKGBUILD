@@ -5,6 +5,7 @@ pkgdesc="Base system packages for joshuaxw, to have a functioning system"
 arch=('any')
 # url=
 license=('MIT')
+install=joshuaxw-base.install
 
 depends=(
     # Base packages

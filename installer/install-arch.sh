@@ -96,7 +96,7 @@ arch-chroot /mnt /bin/bash <<EOF
 cd /home/$user
 su -l $user -c "git clone https://github.com/zqxjvkb/arch-setup"
 cd /home/$user/arch-setup/pkgs/base
-pacman -U joshuaxw-base-0.0.1-1-any.pkg.tar.zst
+pacman -U --noconfirm joshuaxw-base-0.0.1-1-any.pkg.tar.zst
 #cd /home/$user/arch-setup/pkgs/desktop
 #su -l $user -c "makepkg -s"
 EOF
