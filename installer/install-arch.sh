@@ -96,16 +96,16 @@ arch-chroot /mnt /bin/bash <<EOF
 cd /home/$user
 su -l $user -c "git clone https://github.com/zqxjvkb/arch-setup"
 cd /home/$user/arch-setup/pkgs/base
-su -l $user -c "makepkg -s"
-cd /home/$user/arch-setup/pkgs/desktop
-su -l $user -c "makepkg -s"
+pacman -U joshuaxw-base-0.0.1-1-any.pkg.tar.zst
+#cd /home/$user/arch-setup/pkgs/desktop
+#su -l $user -c "makepkg -s"
 EOF
 
 # Set up bootloader (grub)
 # arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
-arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
-arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+#arch-chroot /mnt grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
+#arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 # Add additional packages
 # arch-chroot /mnt pacman -S --noconfirm networkmanager vim base-devel
-arch-chroot /mnt systemctl enable NetworkManager
+#arch-chroot /mnt systemctl enable NetworkManager
