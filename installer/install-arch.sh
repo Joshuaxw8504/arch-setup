@@ -71,7 +71,7 @@ arch-chroot /mnt ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
 arch-chroot /mnt hwclock --systohc
 
 # Generate locales
-echo "LANG=en_US.UTF-8" >> /mnt/etc/locale.conf
+echo "LANG=en_US.UTF-8 UTF-8" >> /mnt/etc/locale.conf
 arch-chroot /mnt locale-gen
 
 # Set hostname and /etc/hosts file
