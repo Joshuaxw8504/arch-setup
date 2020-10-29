@@ -31,7 +31,25 @@ alsa-utils alsa-plugins jack2 qjackctl
 
 # Virtual machines
 qemu libvirt virt-manager ebtables iptables dnsmasq edk2-ovmf
+
+# Password manager
+keepassxc
+
+# Cloud services
+rclone
 )
+
+packages_dell_latitude=(
+    # Drivers
+    xf86-video-vesa sof-firmware
+)
+packages+=(${packages_dell_latitude[@]})
+
+packages_unneeded=(
+    accountsservice alacritty devtools expac iwd lightdm lightdm-slick-greeter lightdm-gtk-greeter lsof luit maint pavucontrol picom pulseaudio-alsa pulseaudio-git s3cmd 
+)
+packages_unneeded+=$(pacman -Sgq gnome)
+packages+=(${packages_unneeded[@]})
 
 output_package_list()
 {
