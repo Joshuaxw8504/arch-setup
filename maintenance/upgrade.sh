@@ -36,7 +36,7 @@ upgrade_aur() {
     print_line
 #    read -p "Do you want to upgrade aur packages? (y/N) "
 #    if [[ $REPLY == 'y' ]]; then
-	su -l "$user" -c "yay -Syu"
+        sudo -u "$user" yay -Syu
 	printf "Done updating aur packages\n"
 #    fi
 }

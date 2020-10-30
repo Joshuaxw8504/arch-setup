@@ -62,7 +62,6 @@ mount "${part_boot}" /mnt/boot/efi
 
 # Install base system
 pacstrap /mnt base linux linux-firmware git base-devel
-arch-chroot /mnt pacman -D --asdeps base linux linux-firmware git autoconf automake binutils bison fakeroot file findutils flex gawk gcc gettext grep groff gzip libtool m4 make pacman patch pkgconf sed sudo texinfo which
 
 # Generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -73,13 +72,13 @@ arch-chroot /mnt hwclock --systohc
 
 # Generate locales
 echo "en_US.UTF-8 UTF-8" >> /mnt/etc/locale.gen
-echo "LANG=en_US.UTF-8 UTF-8" >> /mnt/etc/locale.conf
+echo "LANG=en_US.UTF-8" >> /mnt/etc/locale.conf
 arch-chroot /mnt locale-gen
 
 # Set hostname and /etc/hosts file
 echo "${hostname}" > /mnt/etc/hostname
 
-echo "127.0.0.1	localhost" > /mnt/etc/hosts
+echo "127.0.0.1 localhost" > /mnt/etc/hosts
 echo "::1	localhost" >> /mnt/etc/hosts
 echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 
@@ -88,30 +87,15 @@ arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input "$user"
 # TODO: add realtime and libvirt groups to metapackages
 # Add wheel users to /etc/sudoers
 #arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
-arch-chroot /mnt echo "$wheel ALL=(ALL) ALL" >> /etc/sudoers
+#arch-chroot /mnt echo "$wheel ALL=(ALL) ALL" >> /etc/sudoers
+arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | sudo EDITOR="tee -a" visudo
 
 # Set passwords
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
-# install meta-packages
-: '
-arch-chroot /mnt /bin/bash <<EOF
-su -l jw <<EOF
-cd /home/$user
-su -l $user -c "git clone https://github.com/zqxjvkb/arch-setup"
-su -l $user -c "cd /home/$user/arch-setup/pkgs/base && makepkg -s"
-pacman -U --noconfirm joshuaxw-base-0.0.1-1-any.pkg.tar.zst
-makepkg -c
-su -l $user -c "cd /home/$user/arch-setup/pkgs/desktop && makepkg -s"
-pacman -U --noconfirm joshuaxw-desktop-0.0.1-1-any.pkg.tar.zst
-makepkg -c
-
-#cd /home/$user/arch-setup/pkgs/desktop
-#su -l $user -c "makepkg -s"
-EOF
-'
-echo "Install meta-packages from https://https://github.com/zqxjvkb/arch-setup"
+# Install packages
+echo "Install meta-packages from https://github.com/zqxjvkb/arch-setup"
 
 # Set up bootloader (grub)
 # arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
