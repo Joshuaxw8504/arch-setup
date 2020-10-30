@@ -95,7 +95,7 @@ echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-echo "Install meta-packages from https://github.com/zqxjvkb/arch-setup"
+#echo "Install meta-packages from https://github.com/zqxjvkb/arch-setup"
 
 # Set up bootloader (grub)
 # arch-chroot /mnt pacman -S --no-confirm grub efibootmgr dosfstools os-prober mtools
@@ -105,3 +105,13 @@ echo "Install meta-packages from https://github.com/zqxjvkb/arch-setup"
 # Add additional packages
 # arch-chroot /mnt pacman -S --noconfirm networkmanager vim base-devel
 #arch-chroot /mnt systemctl enable NetworkManager
+
+# Install packages
+arch-chroot /mnt <<EOF
+cd "/home/$user"
+sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
+cd arch-setup/package-lists/
+source main.sh && sync_package_lists --noconfirm && post_install
+EOF
+#also git clone dotfiles
+

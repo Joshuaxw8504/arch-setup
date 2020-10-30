@@ -63,7 +63,7 @@ sync_package_list()
     output_package_list > temp_package_list.txt
     if [[ "$1" == "--noconfirm" ]]
     then
-	sudo pacman -S --needed --noconfirm- < temp_package_list.txt
+	sudo pacman -S --needed --noconfirm - < temp_package_list.txt
 	sudo pacman -Rsu --noconfirm $(comm -23 <(pacman -Qqe | sort) <(sort temp_package_list.txt))
     else
 	sudo pacman -S --needed - < temp_package_list.txt
