@@ -14,9 +14,9 @@ source "$pkg_dir/upgrade.sh"
 source "$pkg_dir/clean.sh"
 			       
 # Do system backup and home directory backup
-# rsync -aAXHv --exclude={"/dev/*","/proc/*","/sys/*","/tmp/*","/run/*","/mnt/*","/media/*","/lost+found", "/home/*"} / /mnt
-# insert home directory backup
-# update list of installed packages
+update_config_files
+package_list
+home_backup
 
 # Shutdown and then wake up at specified time
-sudo rtcwake -l -m disk -t "$boot_time"
+#sudo rtcwake -l -m disk -t "$boot_time"

@@ -5,8 +5,9 @@ default_color="\e[49m"
 red="\e[41m"
 heading_color=$red
 
-user_home="/home/jw"
-package_list_file="$pkgdir/../package-lists/main.sh"
+user="jw"
+user_home="/home/$user"
+package_list_file="$user_home/arch-setup/package-lists/main.sh"
 git_repos=("arch-setup" "dotfiles" "etc")
 backup_dir="$user_home/backup/borg"
 symlink_dirs=("/etc" "/home" "/opt" "/srv" "/usr")

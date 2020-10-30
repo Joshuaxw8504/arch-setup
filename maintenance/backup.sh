@@ -1,6 +1,7 @@
 #!/bin/bash
 
 update_config_files() {
+    print_line
     printf "Remember to update the following github repos, if needed:\n"
     for repo in "${git_repos[@]}"
     do
@@ -11,7 +12,8 @@ update_config_files() {
 
 # List of installed packages (maybe look at metapackages too?)
 package_list() {
-    pacman -Qqe > "$package_list_file"
+    print_line
+#    pacman -Qqe > "$package_list_file"
     printf "Differences between installed packages (left) and package list (right):\n"
     source "$package_list_file"
     diff_packages
@@ -21,6 +23,7 @@ package_list() {
 
 # Home backup
 home_backup() {
+    print_line
     read -p "Do you want to backup the chosen directories to $backup_dir? (y/N) "
     if [[ $REPLY != 'y' ]]; then return; fi
     

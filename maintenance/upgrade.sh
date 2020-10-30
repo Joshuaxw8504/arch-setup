@@ -1,7 +1,8 @@
-!/bin/bash
+#!/bin/bash
 
 # Upgrading the system
 arch_news() {
+    print_line
     # Output list of packages that will be updated
     printf "Packages that will be updated:\n"
     if [[ $(pacman -Qu) ]]
@@ -12,32 +13,36 @@ arch_news() {
     fi
 
     printf "\nCtrl-click on the following link to make sure that none of the updates require manual intervention: \e]8;;https://www.archlinux.org/news\aArch news\e]8;;\a\n"
-    wait_for_keypress
 }
 
 update_mirrorlist() {
-    reflector --verbose --latest 70 --age 24 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
+    print_line
+    reflector --latest 70 --age 24 --protocol https --sort rate --save /etc/pacman.d/mirrorlist
     printf "Done updating mirrorlist\n"
+    wait_for_keypress
 }
 
 upgrade_system() {
-    read -p "Do you want to upgrade the system? (y/N) "
-    if [[ $REPLY == 'y' ]]; then
+    print_line
+#    read -p "Do you want to upgrade the system? (y/N) "
+#    if [[ $REPLY == 'y' ]]; then
 	pacman -Syu
 	printf "Done updating system\n"
-    fi
+#    fi
 
 }
 
 upgrade_aur() {
-    read -p "Do you want to upgrade aur packages? (y/N) "
-    if [[ $REPLY == 'y' ]]; then
-	yay -Syu
+    print_line
+#    read -p "Do you want to upgrade aur packages? (y/N) "
+#    if [[ $REPLY == 'y' ]]; then
+	su -l "$user" -c "yay -Syu"
 	printf "Done updating aur packages\n"
-    fi
+#    fi
 }
 
 pacman_alerts() {
+    print_line
     last_upgrade="$(sed -n '/pacman -Syu/h; ${x;s/.\([0-9-]*\).*/\1/p;}' /var/log/pacman.log)"
     printf "Pacman log warnings:\n"
     if [[ -n "$last_upgrade" ]]; then
@@ -48,6 +53,7 @@ pacman_alerts() {
 }
 
 handle_pacfiles() {
+    print_line
     printf "Handling pacfiles:\n"
     pacdiff
     printf "Done checking for pacfiles\n"
@@ -55,6 +61,7 @@ handle_pacfiles() {
 }
 
 reboot() {
+    print_line
     reboot
 }
 
