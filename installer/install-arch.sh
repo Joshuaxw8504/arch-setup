@@ -113,5 +113,17 @@ sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
 cd arch-setup/package-lists/
 source main.sh && sync_package_lists --noconfirm && post_install
 EOF
-#also git clone dotfiles
 
+# git clone dotfiles
+echo "alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'" >> $HOME/.bashrc
+. $HOME/.bashrc
+echo "dotfiles" >> .gitignore
+git clone --bare https://github.com/zqxjvkb/dotfiles "$HOME/dotfiles"
+
+# Deal with the dotfiles that already have a config in place (config checkout will fail in those cases)
+mkdir -p .config-backup && \
+config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
+    xargs -I{} mv {} .config-backup/{}
+config checkout
+
+config config --local status.showUntrackedFiles no
