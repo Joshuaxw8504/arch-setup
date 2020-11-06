@@ -91,14 +91,14 @@ arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input "$user"
 # Add wheel users to /etc/sudoers
 #arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
 #arch-chroot /mnt echo "$wheel ALL=(ALL) ALL" >> /etc/sudoers
-arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | sudo EDITOR="tee -a" visudo
+arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | sudo EDITOR="tee -a" visudo # TODO: this still doesn't work
 
 # Set passwords
-echo "$user:$password" | chpasswd --root /mnt
+echo "$user:$password" | chpasswd --root /mnt # TODO: setting passwords (probably) still doesn't work
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-arch-chroot /mnt /bin/bash <<EOF
+arch-chroot /mnt /bin/bash <<EOF # TODO: this throws an error and i have no idea why
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
 cd arch-setup/package-lists/
