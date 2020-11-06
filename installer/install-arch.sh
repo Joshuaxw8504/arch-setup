@@ -49,6 +49,9 @@ parted --script "${disk}" -- mklabel gpt \
 part_boot="$(ls ${disk}* | grep -E "^${disk}p?1$")"
 part_swap="$(ls ${disk}* | grep -E "^${disk}p?2$")"
 part_root="$(ls ${disk}* | grep -E "^${disk}p?3$")"
+wipefs "${part_boot}"
+wipefs "${part_swap}"
+wipefs "${part_root}"
 
 mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
@@ -95,7 +98,7 @@ echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-arch-chroot /mnt <<EOF
+arch-chroot /mnt /bin/bash <<EOF
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
 cd arch-setup/package-lists/
