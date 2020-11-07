@@ -101,20 +101,20 @@ echo "root:$password" | chpasswd --root /mnt
 arch-chroot /mnt /bin/bash <<EOF # TODO: this throws an error and i have no idea why
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
-cd arch-setup/package-lists/
-source main.sh && sync_package_list --noconfirm && post_install
+source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post_install
 
 # git clone dotfiles
+cd "/home/$user"
 echo "alias config='/usr/bin/git --git-dir=/home/$user/.cfg/ --work-tree=/home/$user'" >> /home/$user/.bashrc
 . /home/$user/.bashrc
 echo "dotfiles" >> .gitignore
 git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"
 
 # Deal with the dotfiles that already have a config in place (config checkout will fail in those cases)
-mkdir -p .config-backup && \
-config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
-    xargs -I{} mv {} .config-backup/{}
-config checkout
+#mkdir -p .config-backup && \
+#config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
+#    xargs -I{} mv {} .config-backup/{}
+config checkout -f
 
 config config --local status.showUntrackedFiles no
 EOF
