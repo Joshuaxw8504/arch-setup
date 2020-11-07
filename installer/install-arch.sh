@@ -91,16 +91,16 @@ arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input "$user"
 # Add wheel users to /etc/sudoers
 #arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
 #arch-chroot /mnt echo "$wheel ALL=(ALL) ALL" >> /etc/sudoers
-arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | sudo EDITOR="tee -a" visudo # TODO: this still doesn't work
+arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | EDITOR="tee -a" visudo # TODO: this still doesn't work
 
 # Set passwords
 echo "$user:$password" | chpasswd --root /mnt # TODO: setting passwords (probably) still doesn't work
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-arch-chroot /mnt /bin/bash <<EOF # TODO: config is not recognized
+arch-chroot -u $user /mnt /bin/bash <<EOF
 cd "/home/$user"
-sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
+git clone https://github.com/zqxjvkb/arch-setup
 source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post_install
 
 # git clone dotfiles

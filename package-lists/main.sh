@@ -5,7 +5,7 @@ packages=(
 #    base-devel xorg
     
     # Base packages
-    base linux linux-firmware man-db man-pages pacman-contrib
+    base linux linux-firmware man-db man-pages pacman-contrib pacutils
 
     # Bootloader and related packages
     grub efibootmgr dosfstools os-prober mtools
