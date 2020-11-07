@@ -98,13 +98,21 @@ echo "$user:$password" | chpasswd --root /mnt # TODO: setting passwords (probabl
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-arch-chroot -u $user /mnt /bin/bash <<EOF
+arch-chroot /mnt /bin/bash <<EOF
 cd "/home/$user"
-git clone https://github.com/zqxjvkb/arch-setup
+sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
 source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post_install
 
 # git clone dotfiles
 cd "/home/$user"
+echo "dotfiles" >> .gitignore
+sudo -u $user git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"
+
+# Deal with the dotfiles that already have a config in place (config checkout will fail in those cases)
+sudo -u $user /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user checkout -f
+
+sudo -u $user /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user config --local status.showUntrackedFiles no
+EOF
 #temp()
 #{
 #    /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user $@
@@ -112,14 +120,7 @@ cd "/home/$user"
 #echo "alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'" >> /home/$user/.bashrc
 #alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'
 #. /home/$user/.bashrc
-echo "dotfiles" >> .gitignore
-git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"
 
-# Deal with the dotfiles that already have a config in place (config checkout will fail in those cases)
-/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user checkout -f
-
-/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user config --local status.showUntrackedFiles no
-EOF
 #mkdir -p .config-backup && \
 #config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
 #    xargs -I{} mv {} .config-backup/{}
