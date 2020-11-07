@@ -111,10 +111,10 @@ echo "dotfiles" >> .gitignore
 git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"
 
 # Deal with the dotfiles that already have a config in place (config checkout will fail in those cases)
-#mkdir -p .config-backup && \
-#config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
-#    xargs -I{} mv {} .config-backup/{}
 config checkout -f
 
 config config --local status.showUntrackedFiles no
 EOF
+#mkdir -p .config-backup && \
+#config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
+#    xargs -I{} mv {} .config-backup/{}
