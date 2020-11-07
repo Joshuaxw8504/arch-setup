@@ -107,7 +107,7 @@ source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post
 cd "/home/$user"
 config()
 {
-    /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user
+    /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user $@
 }
 #echo "alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'" >> /home/$user/.bashrc
 #alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'
