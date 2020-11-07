@@ -106,7 +106,8 @@ source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post
 # git clone dotfiles
 cd "/home/$user"
 echo "alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'" >> /home/$user/.bashrc
-. /home/$user/.bashrc
+alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'
+#. /home/$user/.bashrc
 echo "dotfiles" >> .gitignore
 git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"
 
