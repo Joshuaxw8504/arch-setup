@@ -105,10 +105,10 @@ source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post
 
 # git clone dotfiles
 cd "/home/$user"
-config()
-{
-    /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user $@
-}
+#temp()
+#{
+#    /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user $@
+#}
 #echo "alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'" >> /home/$user/.bashrc
 #alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'
 #. /home/$user/.bashrc
@@ -116,9 +116,9 @@ echo "dotfiles" >> .gitignore
 git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"
 
 # Deal with the dotfiles that already have a config in place (config checkout will fail in those cases)
-config checkout -f
+/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user checkout -f
 
-config config --local status.showUntrackedFiles no
+/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user config --local status.showUntrackedFiles no
 EOF
 #mkdir -p .config-backup && \
 #config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
