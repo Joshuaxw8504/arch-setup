@@ -20,7 +20,7 @@ packages=(
     xorg-xinit
 
     # Sound
-    alsa-utils alsa-plugins jack2 qjackctl
+    alsa-utils alsa-plugins jack2 realtime-privileges qjackctl
 
     # Make dependencies
     cmake
@@ -81,12 +81,13 @@ diff_packages()
     comm -3 <(pacman -Qqe | sort) <(output_package_list)
 }
 
+# Meant to be run after a clean (re)install of linux
 post_install()
 {
     grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck
     grub-mkconfig -o /boot/grub/grub.cfg
-    systemctl enable --now NetworkManager
-    systemctl enable --now libvirtd
+    systemctl enable NetworkManager
+    systemctl enable libvirtd
     # adding groups (this assumes the user is jw)
     usermod -aG libvirt,realtime jw
 }
