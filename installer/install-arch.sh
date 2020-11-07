@@ -98,14 +98,14 @@ echo "$user:$password" | chpasswd --root /mnt # TODO: setting passwords (probabl
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-arch-chroot /mnt /bin/bash <<EOF # TODO: this throws an error and i have no idea why
+arch-chroot /mnt /bin/bash <<EOF # TODO: config is not recognized
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
 source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post_install
 
 # git clone dotfiles
 cd "/home/$user"
-echo "alias config='/usr/bin/git --git-dir=/home/$user/.cfg/ --work-tree=/home/$user'" >> /home/$user/.bashrc
+echo "alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'" >> /home/$user/.bashrc
 . /home/$user/.bashrc
 echo "dotfiles" >> .gitignore
 git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"

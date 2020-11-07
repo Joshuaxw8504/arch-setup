@@ -1,8 +1,8 @@
 #!/bin/bash
 
 packages=(
-    # Package groups
-    base-devel xorg
+    # Package groups TODO: this doesn't work because sync_package_groups removes all the members since the group members aren't explicitly listed here
+#    base-devel xorg
     
     # Base packages
     base linux linux-firmware man-db man-pages pacman-contrib
@@ -37,6 +37,16 @@ packages=(
     # Cloud services
     rclone
 )
+
+package_groups=(
+    base-devel xorg
+)
+#packages+=(${package_groups[@]})
+for group in ${package_groups[@]};
+do
+    packages+=($(pacman -Qqg $group))
+done
+
 
 packages_aur=(
     discord-canary reaper-bin unityhub yay-git
