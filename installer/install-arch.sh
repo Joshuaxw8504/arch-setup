@@ -94,11 +94,11 @@ arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input "$user"
 arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | EDITOR="tee -a" visudo # TODO: this still doesn't work
 
 # Set passwords
-echo "$user:$password" | chpasswd --root /mnt # TODO: setting passwords (probably) still doesn't work
+echo "$user:$password" | chpasswd --root /mnt # TODO: setting passwords (probably) still doesn't work (nvm it works?)
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-arch-chroot /mnt /bin/bash <<EOF
+arch-chroot /mnt /bin/bash <<EOF # TODO: the git cloned files are read-only, figure out permissions stuff
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
 source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post_install

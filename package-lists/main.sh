@@ -38,13 +38,14 @@ packages=(
     rclone
 )
 
+# TODO: package groups work on host machine but not in vm for some reason, does changing -Qqg to -Sqg fix it?
 package_groups=(
     base-devel xorg
 )
 #packages+=(${package_groups[@]})
 for group in ${package_groups[@]};
 do
-    packages+=($(pacman -Qqg $group))
+    packages+=($(pacman -Sqg $group))
 done
 
 
