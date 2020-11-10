@@ -87,25 +87,24 @@ echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 
 # Add a new user
 arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input "$user"
-# TODO: add realtime and libvirt groups to metapackages
 # Add wheel users to /etc/sudoers
 #arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
-#arch-chroot /mnt echo "$wheel ALL=(ALL) ALL" >> /etc/sudoers
-arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | EDITOR="tee -a" visudo # TODO: this still doesn't work
+echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
+#arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | EDITOR="tee -a" visudo # TODO: this still doesn't work
 
 # Set passwords
-echo "$user:$password" | chpasswd --root /mnt # TODO: setting passwords (probably) still doesn't work (nvm it works?)
+echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # Install packages
-arch-chroot /mnt /bin/bash <<EOF # TODO: the git cloned files are read-only, figure out permissions stuff
+arch-chroot /mnt <<EOF
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
 source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post_install
 
 # git clone dotfiles
 cd "/home/$user"
-echo "dotfiles" >> .gitignore
+sudo -u $user echo "dotfiles" >> .gitignore
 sudo -u $user git clone --bare https://github.com/zqxjvkb/dotfiles "/home/$user/dotfiles"
 
 # Deal with the dotfiles that already have a config in place (config checkout will fail in those cases)
@@ -113,14 +112,3 @@ sudo -u $user /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$us
 
 sudo -u $user /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user config --local status.showUntrackedFiles no
 EOF
-#temp()
-#{
-#    /usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user $@
-#}
-#echo "alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'" >> /home/$user/.bashrc
-#alias config='/usr/bin/git --git-dir=/home/$user/dotfiles/ --work-tree=/home/$user'
-#. /home/$user/.bashrc
-
-#mkdir -p .config-backup && \
-#config checkout 2>&1 | egrep "\s+\." | awk {'print $1'} | \
-#    xargs -I{} mv {} .config-backup/{}
