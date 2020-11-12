@@ -100,7 +100,7 @@ echo "root:$password" | chpasswd --root /mnt
 arch-chroot /mnt <<EOF
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
-source arch-setup/package-lists/main.sh && sync_package_list --noconfirm && post_install
+source arch-setup/package-lists/main.sh && sync_packages --noconfirm && post_install
 
 # git clone dotfiles
 cd "/home/$user"

@@ -20,7 +20,7 @@ upgrade_system
 upgrade_aur
 pacman_alerts
 handle_pacfiles
-reboot
+#reboot
 # Check errors
 failed_services
 journal_errors

@@ -5,7 +5,10 @@ packages=(
 #    base-devel xorg
     
     # Base packages
-    base linux linux-firmware man-db man-pages pacman-contrib pacutils
+    base linux linux-firmware man-db man-pages
+
+    # Packages relating to arch and pacman
+    pacman-contrib pacutils reflector
 
     # Bootloader and related packages
     grub efibootmgr dosfstools os-prober mtools
@@ -14,9 +17,9 @@ packages=(
     networkmanager git cronie
 
     # Higher-level utilities
-    vim emacs firefox mpv youtube-dl
+    vim emacs firefox qutebrowser mpv youtube-dl
 
-    # Other xorg-related packages
+    # xorg-related packages
     xorg-xinit
 
     # Sound
@@ -65,31 +68,63 @@ packages_unneeded=(
 packages_unneeded+=$(pacman -Sgq gnome)
 packages+=(${packages_unneeded[@]})
 '
-sync_package_list()
+sync_packages()
 {
-    output_package_list > temp_package_list.txt
+    # Sync regular packages
+    output_packages > temp_package_list.txt
     if [[ "$1" == "--noconfirm" ]]
     then
 	sudo pacman -S --needed --noconfirm - < temp_package_list.txt
 	sudo pacman -Rsu --noconfirm $(comm -23 <(pacman -Qqe | sort) <(sort temp_package_list.txt))
+	if ! pacman -Qi yay-git > /dev/null ;
+	then
+	    git clone https://aur.archlinux.org/yay-git.git
+	    cd yay-git
+	    makepkg -si
+	    cd ..
+	    rm -rf yay-git
+	fi
+	output_aur_packages > temp_package_list.txt
+	yay -S --needed --noconfirm - < temp_package_list.txt
+	yay -Rsu --noconfirm $(comm -23 <(pacman -Qqm | sort) <(sort temp_package_list.txt))
     else
 	sudo pacman -S --needed - < temp_package_list.txt
 	sudo pacman -Rsu $(comm -23 <(pacman -Qqe | sort) <(sort temp_package_list.txt))
+	if ! pacman -Qi yay-git > /dev/null ;
+	then
+	    git clone https://aur.archlinux.org/yay-git.git
+	    cd yay-git
+	    makepkg -si
+	    cd ..
+	    rm -rf yay-git
+	fi
+	output_aur_packages > temp_package_list.txt
+	yay -S --needed - < temp_package_list.txt
+	yay -Rsu $(comm -23 <(pacman -Qqm | sort) <(sort temp_package_list.txt))
     fi
     rm temp_package_list.txt
 }
 
-output_package_list()
+output_packages()
 {
     for p in ${packages[@]};
     do
 	echo $p
     done | sort
 }
+# Maybe do these together instead of separately?
+output_aur_packages()
+{
+    for p in ${packages_aur[@]};
+    do
+	echo $p
+    done | sort
+}
+
 
 diff_packages()
 {
-    comm -3 <(pacman -Qqe | sort) <(output_package_list)
+    comm -3 <(pacman -Qqe | sort) <(output_packages)
 }
 
 # Meant to be run after a clean (re)install of linux

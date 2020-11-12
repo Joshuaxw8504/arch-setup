@@ -11,7 +11,7 @@ arch_news() {
     else
 	printf "None\n"
     fi
-
+    # Maybe look at that arch wiki link to print out the arch news in the terminal itself
     printf "\nCtrl-click on the following link to make sure that none of the updates require manual intervention: \e]8;;https://www.archlinux.org/news\aArch news\e]8;;\a\n"
 }
 
@@ -24,18 +24,16 @@ update_mirrorlist() {
 
 upgrade_system() {
     print_line
-#    read -p "Do you want to upgrade the system? (y/N) "
-#    if [[ $REPLY == 'y' ]]; then
-	pacman -Syu
-	printf "Done updating system\n"
-#    fi
-
+    printf "Upgrading system\n"
+    pacman -Syu
+    printf "Done updating system\n"
 }
 
 upgrade_aur() {
     print_line
 #    read -p "Do you want to upgrade aur packages? (y/N) "
-#    if [[ $REPLY == 'y' ]]; then
+    #    if [[ $REPLY == 'y' ]]; then
+    printf "Upgrading aur packages\n"
         sudo -u "$user" yay -Syu
 	printf "Done updating aur packages\n"
 #    fi

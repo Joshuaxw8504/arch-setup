@@ -23,6 +23,7 @@ package_list() {
 
 # Home backup
 home_backup() {
+    setup_dirs
     print_line
     read -p "Do you want to backup the chosen directories to $backup_dir? (y/N) "
     if [[ $REPLY != 'y' ]]; then return; fi
