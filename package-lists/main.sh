@@ -124,7 +124,7 @@ output_aur_packages()
 
 diff_packages()
 {
-    comm -3 <(pacman -Qqe | sort) <(output_packages)
+    comm -3 <(pacman -Qqe | sort) <(output_packages) # this can only be run in bash not sh, since there's no process substitution in posix
 }
 
 # Meant to be run after a clean (re)install of linux

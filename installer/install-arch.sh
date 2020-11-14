@@ -88,15 +88,13 @@ echo "127.0.1.1	${hostname}.localdomain	${hostname}" >> /mnt/etc/hosts
 # Add a new user
 arch-chroot /mnt useradd -mU -G wheel,video,audio,storage,games,input "$user"
 # Add wheel users to /etc/sudoers
-#arch-chroot /mnt echo "%wheel ALL=(ALL:ALL) ALL" | EDITOR='tee -a' visudo
 echo "%wheel ALL=(ALL) ALL" >> /mnt/etc/sudoers
-#arch-chroot /mnt echo "%wheel ALL=(ALL) ALL" | EDITOR="tee -a" visudo # TODO: this still doesn't work
 
 # Set passwords
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
-# Install packages
+# Install packages and dotfiles
 arch-chroot /mnt <<EOF
 cd "/home/$user"
 sudo -u $user git clone https://github.com/zqxjvkb/arch-setup
